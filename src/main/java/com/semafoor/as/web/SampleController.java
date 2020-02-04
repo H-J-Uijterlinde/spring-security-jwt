@@ -25,4 +25,9 @@ public class SampleController {
         return ResponseEntity.ok().body("If we can see this message, that means the warfile in the tomcat webapps folder" +
                 " gets replaced automatically. No delete necessary. So hard..");
     }
+
+    @GetMapping("/4")
+    public ResponseEntity<String> getFirstBambooUpdate() {
+        return ResponseEntity.ok().body("This is an example message created to test our CI pipeline");
+    }
 }
