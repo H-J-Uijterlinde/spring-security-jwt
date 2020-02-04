@@ -23,6 +23,6 @@ public class SampleController {
     @GetMapping("/3")
     public ResponseEntity<String> getAutoReplaceTestMessage() {
         return ResponseEntity.ok().body("If we can see this message, that means the warfile in the tomcat webapps folder" +
-                " gets replaced automatically. No delete necessary");
+                " gets replaced automatically. No delete necessary. So hard..");
     }
 }
