@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'war'
 	id "org.gretty" version "3.0.1"
+	id "io.freefair.lombok" version "4.1.6"
 }
 
 group = 'com.semafoor'
@@ -25,8 +26,12 @@ ext {
 
 dependencies {
 
-	// spring
+	// spring-web
 	compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
+
+	// spring-security
+	compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.2.1.RELEASE'
+	compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.2.1.RELEASE'
 
 	// logging
 	compile group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha1'
