@@ -1,27 +1,50 @@
 package com.semafoor.as.security;
 
-import lombok.Value;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Value
+@Entity
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Data
 public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     private String username;
     private String password;
-    private Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "authority")
+    private final List<String> authorities = new ArrayList<>();
+
+    @Column(name = "account_non_expired")
     private boolean accountNonExpired;
+
+    @Column(name = "account_non_locked")
     private boolean accountNonLocked;
+
+    @Column(name = "credentials_non_expired")
     private boolean credentialsNonExpired;
+
     private boolean enabled;
+
+    public User() {}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities;
+        return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
@@ -44,7 +67,10 @@ public class User implements UserDetails {
         return enabled;
     }
 
-    public void addAuthorities(String... authorities) {
-        this.authorities.addAll(AuthorityUtils.createAuthorityList(authorities));
+    public void addAuthorities(Roles... authorities) {
+
+        for (Roles role: authorities) {
+            this.authorities.add(role.getRole());
+        }
     }
 }

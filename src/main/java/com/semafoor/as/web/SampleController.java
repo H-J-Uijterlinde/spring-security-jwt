@@ -2,6 +2,8 @@ package com.semafoor.as.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +17,7 @@ public class SampleController {
         return ResponseEntity.ok().body("An Example Message");
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping("/2")
     public ResponseEntity<String> getExampleAdminMessage() {
         return ResponseEntity.ok().body("This message should only be seen by admins");

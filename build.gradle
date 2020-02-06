@@ -3,6 +3,7 @@ plugins {
 	id 'war'
 	id "org.gretty" version "3.0.1"
 	id "io.freefair.lombok" version "4.1.6"
+	id "org.liquibase.gradle" version "2.0.2"
 }
 
 group = 'com.semafoor'
@@ -24,14 +25,42 @@ ext {
 	springVersion = '5.2.3.RELEASE'
 }
 
+//liquibase {
+//	activities {
+//		main {
+//			changeLogFile 'src/main/resources/db/main.groovy'
+//			url 'hibernate:spring:com.semafoor.as.security?dialect=liquibase.ext.hibernate.database.HibernateGenericDialect'
+//			driver 'liquibase.ext.hibernate.database.connection.HibernateDriver'
+//		}
+//	}
+//}
+
 dependencies {
 
 	// spring-web
 	compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
 
+	// Spring Data JPA
+	compile group: 'org.springframework.data', name: 'spring-data-jpa', version: '2.2.4.RELEASE'
+
+	// Hibernate
+	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.4.10.Final'
+
+	// Liquibase
+	compile group: 'org.liquibase', name: 'liquibase-core', version: '3.8.5'
+
 	// spring-security
 	compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.2.1.RELEASE'
 	compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.2.1.RELEASE'
+
+	// jackson
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
+
+	// jwt
+	compile group: 'com.auth0', name: 'java-jwt', version: '3.9.0'
+
+	// java annotation api
+	compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
 
 	// logging
 	compile group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha1'
@@ -42,6 +71,9 @@ dependencies {
 	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.0'
 	testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.2.4'
 	testCompile group: 'org.assertj', name: 'assertj-core', version: '3.15.0'
+
+	// h2
+	compile group: 'com.h2database', name: 'h2', version: '1.4.200'
 }
 
 test {
