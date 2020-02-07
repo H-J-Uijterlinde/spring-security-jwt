@@ -1,22 +1,27 @@
 package com.semafoor.as.web;
 
-import org.springframework.http.HttpStatus;
+import com.semafoor.as.config.SecurityConfig;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/examples")
+/**
+ * Simple Controller for testing the security implementation. Only users who have successfully authenticated should be
+ * able to see the messages defined in the methods, see {@link SecurityConfig}
+ */
+
+@RequestMapping("/protected")
 @RestController
 public class SampleController {
 
     @GetMapping("/1")
     public ResponseEntity<String> getExampleMessage() {
-        return ResponseEntity.ok().body("An Example Message");
+        return ResponseEntity.ok().body("An Example Message, needs authentication");
     }
 
+    // This endpoint should only be accessible for users with "ROLE_ADMIN".
     @Secured("ROLE_ADMIN")
     @GetMapping("/2")
     public ResponseEntity<String> getExampleAdminMessage() {

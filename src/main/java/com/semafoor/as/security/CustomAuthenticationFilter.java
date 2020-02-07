@@ -4,8 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -14,19 +12,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Duration;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.semafoor.as.security.JwtConstants.*;
 
 /**
  * Custom implementation of the authentication filter, overriding the default behaviour of springs
- * UsernamePasswordAuthenticationFilter on successful and un successful authentication.
- * <p>
+ * UsernamePasswordAuthenticationFilter on successful and unsuccessful authentication.
+ *
  * By default this filter is activated on http post requests to /login
  */
 
@@ -34,6 +33,15 @@ import static com.semafoor.as.security.JwtConstants.*;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     ObjectMapper mapper = new ObjectMapper();
+
+    /**
+     * Defines behaviour upon successful authentication. In this case creating a jwt token and adding it to the response.
+     *
+     * @param request {@link HttpServletRequest}
+     * @param response {@link HttpServletResponse}
+     * @param chain {@link FilterChain}
+     * @param authResult {@link Authentication}
+     */
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
@@ -45,6 +53,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         String token = JWT.create()
                 .withSubject(((UserDetails) authResult.getPrincipal()).getUsername())
+                // Send roles in jwt body, can be useful for clients
                 .withArrayClaim(ROLES_CLAIM, authResult.getAuthorities().stream()
                         .map(GrantedAuthority::toString).toArray(String[]::new))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
@@ -52,6 +61,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+        // expose the authorization header, else clients might not be able to use it
         response.addHeader(HEADERS_EXPOSED, HEADER_STRING);
     }
 

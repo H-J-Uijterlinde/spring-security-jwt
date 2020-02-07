@@ -22,12 +22,23 @@ import java.util.stream.Collectors;
 
 import static com.semafoor.as.security.JwtConstants.*;
 
+/**
+ * Custom filter, called on every request. Checks if the request already contains a token. If so it gets the authentication
+ * information from the token. Custom behaviour is provided by extending {@link BasicAuthenticationFilter} and overriding
+ * the doFilterInternal method
+ */
+
 @Slf4j
 public class CustomAuthorizationFilter extends BasicAuthenticationFilter {
 
     public CustomAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
+
+    /**
+     * Checks the request for valid jwt token format. If so it creates a {@link UsernamePasswordAuthenticationToken} from
+     * the jwt token.
+     */
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -43,17 +54,24 @@ public class CustomAuthorizationFilter extends BasicAuthenticationFilter {
 
         UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(header);
 
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        }
+        // pas token to security context. SecurityContextHolder associates right security context with right thread.
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         chain.doFilter(request, response);
     }
 
+    /**
+     * Generates a {@link UsernamePasswordAuthenticationToken} from a jwt token string.
+     *
+     * @param header header string, containing jwt token.
+     *
+     * @return {@link UsernamePasswordAuthenticationToken}
+     */
     private UsernamePasswordAuthenticationToken getAuthentication(String header) {
 
         log.debug("Getting authentication in custom authorization filter");
 
+        // Decodes and verifies the jwt token. Checks e.g. if token is not expired.
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                 .build()
                 .verify(header.replace(TOKEN_PREFIX, ""));
@@ -63,8 +81,6 @@ public class CustomAuthorizationFilter extends BasicAuthenticationFilter {
         String[] rolesAsString = roles.asArray(String.class);
 
         if (user != null) {
-
-            log.info(Arrays.stream(rolesAsString).map(SimpleGrantedAuthority::new).collect(Collectors.toList()).toString());
 
             return new UsernamePasswordAuthenticationToken(user, null,
                     Arrays.stream(rolesAsString).map(SimpleGrantedAuthority::new).collect(Collectors.toList()));

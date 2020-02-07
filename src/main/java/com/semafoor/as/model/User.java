@@ -1,8 +1,7 @@
-package com.semafoor.as.security;
+package com.semafoor.as.model;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+/**
+ * Custom implementation of the UserDetails interface, which is used in springs security mechanism.
+ */
 
 @Entity
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

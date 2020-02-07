@@ -1,7 +1,7 @@
 package com.semafoor.as;
 
-import com.semafoor.as.security.Roles;
-import com.semafoor.as.security.User;
+import com.semafoor.as.model.Roles;
+import com.semafoor.as.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,8 +15,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Slf4j
-@Service
-@DependsOn("liquibase")
 public class DbTestData {
 
     @PersistenceContext

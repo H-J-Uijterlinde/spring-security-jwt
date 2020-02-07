@@ -1,21 +1,29 @@
 package com.semafoor.as.config;
 
-import liquibase.integration.spring.SpringLiquibase;
+import com.semafoor.as.DbTestData;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
+/**
+ * Base configuration class, used to group all other configuration classes. Beans that do not logically  belong to any
+ * more specific configuration class can be defined here.
+ */
 
 @Configuration
 @ComponentScan(basePackages = {"com.semafoor.as.config"})
 public class AppConfig {
 
+    /**
+     * populate db with some test data.
+     */
+
     @Bean
-    public SpringLiquibase liquibase(DataSource dataSource) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setChangeLog("classpath:db/liquibase-changeLog.xml");
-        liquibase.setDataSource(dataSource);
-        return liquibase;
+    @DependsOn("liquibase")
+    public DbTestData testData(PasswordEncoder passwordEncoder, PlatformTransactionManager transactionManager) {
+        return new DbTestData(passwordEncoder, transactionManager);
     }
 }

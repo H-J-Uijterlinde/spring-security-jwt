@@ -19,6 +19,9 @@ gretty {
 	httpPort = 8090
 	contextPath = '/as'
 	servletContainer = 'jetty9.4'
+	jvmArgs = [
+	        '-Dspring.profiles.active=im'
+	]
 }
 
 ext {
